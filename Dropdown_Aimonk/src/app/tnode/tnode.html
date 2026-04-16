@@ -1,0 +1,26 @@
+<div class="tnode-card">
+  <div class="tnode-header">
+    <button type="button" (click)="toggleChildren()" *ngIf="inputNode.children?.length">
+      {{ inputNode.isopen ? '▼' : '▶' }}
+    </button>
+    <input type="text" [(ngModel)]="inputNode.name" placeholder="Node name" />
+    <button type="button" (click)="addChild()">Add Child</button>
+    <button type="button" (click)="addSelf()">Add Sibling</button>
+  </div>
+
+  <div class="tnode-content" *ngIf="inputNode.isopen || !inputNode.children?.length">
+    @if (!inputNode.children?.length) {
+      <div class="tnode-data">
+        <input type="text" [(ngModel)]="inputNode.data" placeholder="Node data" />
+      </div>
+    }
+
+    @if (inputNode.children?.length) {
+      <div class="tnode-children">
+        @for (child of inputNode.children; track child.id; let i = $index) {
+          <app-tnode [inputNode]="child" (addSiblingEvent)="onAddSibling(i)"></app-tnode>
+        }
+      </div>
+    }
+  </div>
+</div>

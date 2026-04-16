@@ -1,0 +1,21 @@
+<div class="tag-view">
+  <div class="tag-header">
+    <div class="tag-name-container" (click)="toggle()">
+      <span class="arrow" [class.collapsed]="!isOpen" *ngIf="tag.children && tag.children.length > 0">▶</span>
+      <span class="tag-name">{{ tag.name }}</span>
+    </div>
+    <button class="add-child-btn" (click)="addChild()">Add Child</button>
+  </div>
+
+  <div class="tag-content" *ngIf="isOpen">
+    <!-- If node has children -->
+    <div *ngIf="tag.children && tag.children.length > 0" class="children-container">
+      <app-tag-view *ngFor="let child of tag.children" [tag]="child"></app-tag-view>
+    </div>
+
+    <!-- If node has data (and no children) -->
+    <div *ngIf="tag.data !== undefined" class="data-container">
+      <input type="text" [(ngModel)]="tag.data" class="data-input" />
+    </div>
+  </div>
+</div>

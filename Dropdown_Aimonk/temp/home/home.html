@@ -1,0 +1,30 @@
+<div class="universe-wrapper">
+  <!-- Twinkling Stars (Static Background) -->
+  <div class="stars-container">
+    <div *ngFor="let star of stars"
+         class="star"
+         [style.left.%]="star.x"
+         [style.top.%]="star.y"
+         [style.width.px]="star.size"
+         [style.height.px]="star.size"
+         [style.animation-duration.s]="star.duration"
+         [style.animation-delay.s]="star.delay">
+    </div>
+  </div>
+
+  <!-- Static Nebula Glows -->
+  <div class="nebula-static nebula-1"></div>
+  <div class="nebula-static nebula-2"></div>
+
+  <!-- <div class="card space-card shadow-lg">
+    <div class="card-header space-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 text-glow">🌌 Galactic Tag Tree</h5>
+      <button class="btn btn-sm btn-outline-info" (click)="saveTree()">Transmit Data</button>
+    </div>
+    <div class="card-body">
+      <div class="tree-container">
+        <app-tag-view [tag]="rootTag"></app-tag-view>
+      </div>
+    </div>
+  </div> -->
+</div>

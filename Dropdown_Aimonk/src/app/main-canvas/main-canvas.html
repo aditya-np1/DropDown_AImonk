@@ -1,0 +1,63 @@
+<div class="canvas-container">
+  <div class="canvas-header d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-light">Tag Tree Canvas</h2>
+    <button *ngIf="tree" class="btn btn-warning shadow-sm" (click)="exportTree()">
+      <i class="bi bi-download"></i> Export JSON & Save
+    </button>
+  </div>
+
+  <hr class="border-secondary mb-5">
+
+  @if (isLoading) {
+    <div class="loading-state text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="text-primary mt-3">Loading Tree Data...</p>
+    </div>
+  } @else if (!tree) {
+    <div class="empty-state text-center py-5">
+      <div class="alert alert-dark border-secondary bg-dark text-light mb-4">
+        <i class="bi bi-database-dash"></i> The tag database is currently empty.
+      </div>
+      <button class="btn btn-success btn-lg px-5 shadow" (click)="createInitialTree()">
+        <span class="fs-4">+</span> Create Root Tag
+      </button>
+    </div>
+  } @else {
+    <div class="tree-root-container">
+      <!-- We treat the 'tree' object as the root, and render its children -->
+      @if (tree.children && tree.children.length > 0) {
+        @for (node of tree.children; track node.id; let i = $index) {
+          <div class="node-wrapper mb-3">
+            <app-tnode
+              [inputNode]="node"
+              (addSiblingEvent)="onAddTopLevelSibling(i)">
+            </app-tnode>
+          </div>
+        }
+      } @else {
+        <div class="card bg-dark border-secondary p-4 text-center">
+          <h4 class="text-light">Root Node: {{ tree.name }}</h4>
+          <p class="text-muted">No children added yet.</p>
+          <button class="btn btn-outline-primary" (click)="onAddTopLevelSibling(-1)">
+            + Add First Child
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Export Preview Area -->
+  @if (exportedJson) {
+    <div class="export-preview mt-5 animate__animated animate__fadeIn">
+      <div class="card bg-dark border-warning">
+        <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+          <strong>Exported JSON Structure</strong>
+          <button class="btn-close" (click)="exportedJson = null"></button>
+        </div>
+        <div class="card-body">
+          <pre class="text-warning m-0"><code>{{ exportedJson }}</code></pre>
+        </div>
+      </div>
+    </div>
+  }
+</div>
