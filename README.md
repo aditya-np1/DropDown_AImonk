@@ -72,17 +72,7 @@ By utilizing `[(ngModel)]`, every keystroke in the "Data" input field instantly 
 ### 2. Component Communication
 - **Input (`@Input`)**: Used to pass the specific node's data and state (collapsed/expanded) down to the recursive instance.
 - **Output (`@Output`)**: Used to bubble up events like `addChild` or `deleteNode` to the root container, ensuring a single source of truth for the tree state.
-
-### 3. Database Schema (SQL Server)
-The system uses a relational adjacency list model to store hierarchy:
-```sql
-CREATE TABLE Trees (
-    TreeID INT PRIMARY KEY IDENTITY(1,1),
-    JsonData NVARCHAR(MAX), -- Optimized for fast JSON storage/retrieval
-    CreatedAt DATETIME DEFAULT GETDATE()
-);
-```
-
+  
 ---
 
 ## 🚀 Getting Started
