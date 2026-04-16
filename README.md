@@ -21,7 +21,7 @@ A robust, full-stack application designed to manage infinite recursive tag struc
 ## 🛠 Tech Stack
 
 | Layer | Technology |
-| :--- | :--- |
+ 
 | **Frontend** | Angular (Standalone Components), RxJS, CSS3 Transitions |
 | **Backend** | Django REST Framework (DRF) |
 | **Database** | MS SQL Server |
