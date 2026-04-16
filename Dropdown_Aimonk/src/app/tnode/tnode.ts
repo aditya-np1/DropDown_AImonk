@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, forwardRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, forwardRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Node } from '../types/dropdown';
 
@@ -12,7 +12,8 @@ import { Node } from '../types/dropdown';
 })
 export class TNode {
   @Input() inputNode!: Node;
-  @Output() addSiblingEvent = new EventEmitter<void>();
+
+  isEditingName = false;
 
   toggleChildren() {
     this.inputNode.isopen = !this.inputNode.isopen;
@@ -29,7 +30,6 @@ export class TNode {
     }
 
     // 2. Requirement: New child Tag must have name "New Child" and data "Data"
-    // Also property constraint: "children" or "data" but not both.
     const newNode: Node = {
       id: this.generateId(),
       name: 'New Child',
@@ -41,22 +41,15 @@ export class TNode {
     this.inputNode.isopen = true;
   }
 
-  addSelf() {
-    this.addSiblingEvent.emit();
+  enableEditName() {
+    this.isEditingName = true;
   }
 
-  onAddSibling(index: number) {
-    if (this.inputNode.children) {
-      this.inputNode.children.splice(index + 1, 0, {
-        id: this.generateId(),
-        name: 'New Sibling',
-        data: 'Data',
-        isopen: true
-      });
-    }
+  saveName() {
+    this.isEditingName = false;
   }
 
-  private generateId(): number {
-    return Date.now() + Math.floor(Math.random() * 1000);
+  generateId(): number {
+    return Date.now() + Math.floor(Math.random() * 10000);
   }
 }

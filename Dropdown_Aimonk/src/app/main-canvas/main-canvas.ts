@@ -1,8 +1,15 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TagService } from '../services/tag.service';
 import { Node } from '../types/dropdown';
 import { TNode } from '../tnode/tnode';
 import { CommonModule } from '@angular/common';
+
+interface TreeRecord {
+  id?: number;
+  name: string;
+  tree: Node;
+  exportedJson?: string | null;
+}
 
 @Component({
   selector: 'app-main-canvas',
@@ -12,101 +19,69 @@ import { CommonModule } from '@angular/common';
   styleUrl: './main-canvas.css',
 })
 export class MainCanvas implements OnInit {
-  tree: Node | null = null;
+  trees: TreeRecord[] = [];
   isLoading = true;
-  exportedJson: string | null = null;
 
-  constructor(
-    private tagService: TagService,
+  constructor(private tagService: TagService,
     private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
-    this.fetchTree();
+    this.fetchTrees();
   }
 
-  fetchTree() {
+  fetchTrees() {
+    debugger
     this.isLoading = true;
-    this.tagService.getTree().subscribe({
-      next: (data: any) => {
-        if (!data || (Array.isArray(data) && data.length === 0)) {
-          this.tree = null;
+    this.tagService.getTrees().subscribe({
+      next: (data: any[]) => {
+        if (data && data.length > 0) {
+          this.trees = data.map(item => ({
+            id: item.id,
+            name: item.name || 'Tree ' + item.id,
+            tree: item.tree,
+            exportedJson: null
+          }));
         } else {
-          this.tree = Array.isArray(data) ? { id: 0, name: 'Root', children: data, isopen: true } : data;
-          if (this.tree && !this.tree.children) this.tree.children = [];
+          this.trees = [];
         }
         this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.tree = null;
+      error: (err) => {
+        console.error('Failed to fetch trees', err);
+        // Default to a new tree if backend fails or is empty
+        // this.addNewTree();
         this.isLoading = false;
-        this.cdr.detectChanges();
       }
     });
   }
 
-  createInitialTree() {
-    const rootName = 'Root Node';
-    const rootData = 'Initial Content';
-
-    this.tagService.postTreeView({
-      TreeID: 1,
-      TagName: rootName,
-      TagData: rootData,
-      TagID: null
-    }).subscribe({
+  addRoot() {
+    const now = Date.now();
+    const newTree: Node = {
+      id: now,
+      name: 'root',
+      children: [
+      ],
+      data: 'DATA',
+      isopen: false
+    };
+    this.trees.push({ name: 'root', tree: newTree, exportedJson: null });
+    this.tagService.saveTree(newTree).subscribe({
       next: (res: any) => {
-        this.tree = {
-          id: res.TagID || Date.now(),
-          name: rootName,
-          data: rootData,
-          children: [],
-          isopen: true
-        };
-        this.cdr.detectChanges();
+        this.trees[this.trees.length - 1].id = res.id;
+        console.log('New tree created and saved to database!');
       },
-      error: (err) => console.error('Failed to create root', err)
+      error: (err) => console.error('Error saving new tree:', err)
     });
   }
 
-  onAddTopLevelSibling(index: number) {
-    if (!this.tree) {
-      this.createInitialTree();
-      return;
-    }
-
-    const newNodeName = 'New Child';
-    const newNodeData = 'Data';
-
-    this.tagService.postTreeView({
-      TreeID: 1,
-      TagName: newNodeName,
-      TagData: newNodeData,
-      TagID: null
-    }).subscribe({
-      next: (res: any) => {
-        const newNode: Node = {
-          id: res.TagID || Date.now(),
-          name: newNodeName,
-          data: newNodeData,
-          children: [],
-          isopen: true
-        };
-        if (!this.tree!.children) this.tree!.children = [];
-        this.tree!.children.splice(index + 1, 0, newNode);
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  exportTree() {
-    if (!this.tree) return;
-
-    // Requirement: Extract only "name", "children", and "data" recursively
+  exportTree(record: TreeRecord) {
     const extractData = (node: Node): any => {
       const result: any = { name: node.name };
 
+      // Enforce the requirement: name + EITHER children OR data
       if (node.children && node.children.length > 0) {
         result.children = node.children.map(child => extractData(child));
       } else {
@@ -116,20 +91,22 @@ export class MainCanvas implements OnInit {
       return result;
     };
 
-    // If we wrapped flat data in a virtual root, we export its children
-    let exportedObject;
-    if (this.tree.id === 0 && this.tree.name === 'Root') {
-        exportedObject = this.tree.children?.map(child => extractData(child));
+    const exportedObject = extractData(record.tree);
+    record.exportedJson = JSON.stringify(exportedObject, null, 2);
+
+    if (record.id) {
+      this.tagService.updateTree(record.id, exportedObject).subscribe({
+        next: () => alert('Tree updated successfully!'),
+        error: (err) => console.error('Error updating tree:', err)
+      });
     } else {
-        exportedObject = extractData(this.tree);
+      this.tagService.saveTree(exportedObject).subscribe({
+        next: (res: any) => {
+          record.id = res.id;
+          alert('Tree saved to database!');
+        },
+        error: (err) => console.error('Error saving tree:', err)
+      });
     }
-
-    this.exportedJson = JSON.stringify(exportedObject, null, 2);
-
-    // Requirement: Call REST API and save tree hierarchy
-    this.tagService.saveTree(exportedObject).subscribe({
-      next: () => alert('Tree exported and saved to database successfully!'),
-      error: (err) => console.error('Error saving exported tree:', err)
-    });
   }
 }

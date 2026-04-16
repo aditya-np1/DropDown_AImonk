@@ -1,0 +1,84 @@
+.tnode-card {
+  border: 1px solid #ccc;
+  margin: 5px;
+  padding: 5px;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+.tnode-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+  background-color: #e7f3ff;
+  border-radius: 3px;
+  cursor: default;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  width: 20px;
+}
+
+.node-name-container {
+  flex-grow: 1;
+  cursor: text;
+}
+
+.node-name {
+  font-weight: bold;
+  color: #004085;
+}
+
+.name-input {
+  width: 100%;
+  padding: 2px 5px;
+}
+
+.add-child-btn {
+  padding: 2px 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.add-child-btn:hover {
+  background-color: #0056b3;
+}
+
+.tnode-content {
+  padding-left: 20px;
+  margin-top: 5px;
+}
+
+.tnode-data {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.data-label {
+  font-weight: bold;
+  color: #555;
+}
+
+.data-input {
+  flex-grow: 1;
+  padding: 2px 5px;
+}
+
+.tnode-children {
+  border-left: 1px dashed #aaa;
+  margin-top: 5px;
+}
+
+.child-wrapper {
+  margin-bottom: 2px;
+}

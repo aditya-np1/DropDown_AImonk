@@ -1,26 +1,37 @@
 <div class="tnode-card">
-  <div class="tnode-header">
-    <button type="button" (click)="toggleChildren()" *ngIf="inputNode.children?.length">
-      {{ inputNode.isopen ? '▼' : '▶' }}
+  <div class="tnode-header" [style.backgroundColor]="'#e7f3ff'">
+    <button type="button" (click)="toggleChildren()" class="toggle-btn">
+      {{ inputNode.isopen ? 'v' : '>' }}
     </button>
-    <input type="text" [(ngModel)]="inputNode.name" placeholder="Node name" />
-    <button type="button" (click)="addChild()">Add Child</button>
-    <button type="button" (click)="addSelf()">Add Sibling</button>
+
+    <div class="node-name-container" (click)="enableEditName()">
+      <span *ngIf="!isEditingName" class="node-name">{{ inputNode.name }}</span>
+      <input
+        *ngIf="isEditingName"
+        type="text"
+        [(ngModel)]="inputNode.name"
+        (keyup.enter)="saveName()"
+        (blur)="saveName()"
+        autofocus
+        class="name-input"
+      />
+    </div>
+
+    <button type="button" (click)="addChild()" class="add-child-btn">Add Child</button>
   </div>
 
-  <div class="tnode-content" *ngIf="inputNode.isopen || !inputNode.children?.length">
-    @if (!inputNode.children?.length) {
-      <div class="tnode-data">
-        <input type="text" [(ngModel)]="inputNode.data" placeholder="Node data" />
-      </div>
-    }
+  <div class="tnode-content" *ngIf="inputNode.isopen">
+    <!-- If it has data, show text field -->
+    <div *ngIf="inputNode.data !== undefined" class="tnode-data">
+      <span class="data-label">Data: </span>
+      <input type="text" [(ngModel)]="inputNode.data" class="data-input" />
+    </div>
 
-    @if (inputNode.children?.length) {
-      <div class="tnode-children">
-        @for (child of inputNode.children; track child.id; let i = $index) {
-          <app-tnode [inputNode]="child" (addSiblingEvent)="onAddSibling(i)"></app-tnode>
-        }
+    <!-- If it has children, show them recursively -->
+    <div *ngIf="inputNode.children && inputNode.children.length > 0" class="tnode-children">
+      <div *ngFor="let child of inputNode.children" class="child-wrapper">
+        <app-tnode [inputNode]="child"></app-tnode>
       </div>
-    }
+    </div>
   </div>
 </div>
