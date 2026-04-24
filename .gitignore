@@ -8,3 +8,17 @@ db.sqlite3
 node_modules/
 dist/
 .env
+.idea/.gitignore
+.idea/AImonk_Dropdown.iml
+.idea/markdown.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/studiobot.xml
+.idea/vcs.xml
+.idea/caches/deviceStreaming.xml
+Backend/.vscode/settings.json
+Backend/DropdownAPI/.idea/caches/deviceStreaming.xml
+Frontend/.vscode/extensions.json
+Frontend/.vscode/launch.json
+Frontend/.vscode/mcp.json
+Frontend/.vscode/tasks.json
