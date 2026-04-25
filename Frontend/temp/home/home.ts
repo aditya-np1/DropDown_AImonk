@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TagViewComponent } from '../node/node';
-import { Node } from '../types/dropdown';
+// import { Node } from '../types/dropdown';
 
 interface Star {
   x: number;
